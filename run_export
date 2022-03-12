@@ -1,0 +1,4 @@
+python3 object_detection/exporter_main_v2.py \
+    --pipeline_config_path config/faster_rcnn_resnet50_v1_1024x1024.config \
+    --trained_checkpoint_dir train \
+    --output_directory exported_model \
