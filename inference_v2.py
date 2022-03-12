@@ -9,7 +9,7 @@ import warnings
 import pandas as pd
 from glob import glob
 import mimetypes
-import validators
+# import validators
 from utils import label_map_util
 from utils import visual_utils as viz_utils
 warnings.filterwarnings('ignore')  
@@ -34,8 +34,8 @@ def VideoRecInit(WIDTH,HEIGHT,path):
     videowriter = cv2.VideoWriter(path, fourcc, 30.0, (WIDTH,HEIGHT))
     return videowriter
 
-def process_init(path_to_ckpt='models/RV4/saved_model',
-    path_to_labels='models/label_map.pbtxt'):
+def process_init(path_to_ckpt='exported_model/saved_model',
+    path_to_labels='inputs/label_map.pbtxt'):
     
     global category_index, detect_fn
 
@@ -161,17 +161,28 @@ def video_compute(args):
         #    continue
         print ('frame_no: ' + str(frame_no))
         timer = cv2.getTickCount()
-        out_frame,bboxes = sample_compute(frame,score_th=args.score_thresh)
+        width_chunk = int(frame.shape[1] / 3)
+        chunk_list = []
+        for i in range(3):
+            if i == 0:
+                crop_img = frame[:, 0:width_chunk]
+            else:
+                crop_img = frame[:, width_chunk: width_chunk + width_chunk]
+                width_chunk += width_chunk               
+            out_frame,bboxes = sample_compute(crop_img,score_th=args.score_thresh)
+            print("bboxes: ", bboxes)
+            chunk_list.append(out_frame)
         if not bboxes:
             df = df.append({'frame_no':frame_no,'fX':wd,'fY':ht,'cx':0, 'cy':0,'xmin':0,'ymin':0,'xmax':0,'ymax':0,'confidence':0},ignore_index=True)
         else:
+            centers = None
             for bbox in bboxes:
                 df = df.append({'frame_no':frame_no,'fX':wd,'fY':ht,'cx':bbox[4], 'cy':bbox[5],'xmin':bbox[0],'ymin':bbox[1],'xmax':bbox[2],'ymax':bbox[3],'confidence':bbox[6]},ignore_index=True)
         fps = cv2.getTickFrequency() / (cv2.getTickCount() - timer)
         print("fps : " + str(fps))
+        final_image = np.hstack((chunk_list[0],chunk_list[1], chunk_list[2]))
 
-
-        videowriter.write(out_frame)
+        videowriter.write(final_image)
         df.to_csv(args.output_directory + '.csv')
     return None
 
@@ -184,8 +195,29 @@ if __name__ == '__main__':
         if mimetypes.guess_type(args.input_directory)[0].startswith('video'):
             video_compute(args)
         else:
-            image = sample_compute(args.input_directory,args.score_thresh)
-            cv2.imwrite('result.png',image)
+            # frame = args.input_directory
+            frame = cv2.imread(args.input_directory)
+            width_chunk = int(frame.shape[1] / 3)
+            chunk_list = []
+            bboxes_dict = {}
+            for i in range(3):
+                if i == 0:
+                    crop_img = frame[:, 0:width_chunk]
+                else:
+                    crop_img = frame[:, width_chunk: width_chunk + width_chunk]
+                    width_chunk += width_chunk               
+                # out_frame,bboxes = sample_compute(frame,score_th=args.score_thresh)
+                out_frame, bboxes = sample_compute(crop_img,args.score_thresh)
+                if bboxes:
+                    bboxes_dict[i] = bboxes[0]
+                cv2.imshow("image",out_frame)
+                cv2.waitKey(0)
+                print("bboxes: ", bboxes)
+                chunk_list.append(out_frame)
+            print("bboxes_dict: ", bboxes_dict)
+            # print(bboxes)
+            # print("type:", type(bboxes))
+            cv2.imwrite('result_2.png',np.hstack((chunk_list[0],chunk_list[1], chunk_list[2])))
     elif validators.url(args.input_directory):
         video_compute(args)
     else:
