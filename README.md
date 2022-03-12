@@ -6,9 +6,19 @@ TF2 Object Detection
 
 TensorFlow Object Detection API Installation
 
+Inside inputs folder
+
+* place "label_map.pbtxt" and "tf.record files"
+
+Inside config folder
+
+* download the models from here https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md
+
+* place the config file in it and change the paths plus parameters
+
 Parent Directory
 
-* git clone https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md
+* git clone https://github.com/tensorflow/models.git
 
 > `%cd models/research`
 
