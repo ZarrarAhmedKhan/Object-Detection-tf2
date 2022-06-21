@@ -1,6 +1,6 @@
 # Object-Detection-tf2
 
-TF2 Object Detection
+TF2 Object Detection - tensorflow==2.7.0
 
 ## Preprocessing
 
