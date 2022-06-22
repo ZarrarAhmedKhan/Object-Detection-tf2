@@ -103,3 +103,7 @@ For Tensorflow Object API 2, in **model_main_tf2.py** line 104, change to this:
 >         
 >               checkpoint_max_to_keep=500
 >               )
+
+* If we want that , after **how many steps we want to save our checpoint**
+
+> We can pass **checkpoint_every_n** = 1000 (default) in run_train.py as an arguments. 
