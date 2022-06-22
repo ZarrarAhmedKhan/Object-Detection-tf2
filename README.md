@@ -83,7 +83,7 @@ So, for now it is
 
 ## Suggestions
 
-If you want to add how many max checkpoints you want to keep **checkpoint_max_to_keep** 
+* If we want to add how many max checkpoints you want to keep **checkpoint_max_to_keep** 
 
 For Tensorflow Object API 2, in **model_main_tf2.py** line 104, change to this:
 
