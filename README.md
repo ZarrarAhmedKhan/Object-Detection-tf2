@@ -88,10 +88,17 @@ If you want to add how many max checkpoints you want to keep "checkpoint_max_to_
 For Tensorflow Object API 2, in model_main_tf2.py line 104, change to this:
 
 >model_lib_v2.train_loop(
+>
 >          pipeline_config_path=FLAGS.pipeline_config_path,
+>          
 >          model_dir=FLAGS.model_dir,
+>          
 >         train_steps=FLAGS.num_train_steps,
+>         
 >         use_tpu=FLAGS.use_tpu,
+>         
 >         checkpoint_every_n=FLAGS.checkpoint_every_n,
+>         
 >         record_summaries=FLAGS.record_summaries,
+>         
 >         checkpoint_max_to_keep=500)
