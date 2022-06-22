@@ -87,7 +87,7 @@ If you want to add how many max checkpoints you want to keep **checkpoint_max_to
 
 For Tensorflow Object API 2, in **model_main_tf2.py** line 104, change to this:
 
-> model_lib_v2.train_loop(
+>     model_lib_v2.train_loop(
 >
 >               pipeline_config_path=FLAGS.pipeline_config_path,
 >          
